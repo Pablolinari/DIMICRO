@@ -27,11 +27,17 @@ int LeerTeclado() {
   }
 }
 void TecladoLibre() {
-  while (analogRead(A0) >= 0 && analogRead(A0) <= 73) {}
-  while (analogRead(A0) >= 73 && analogRead(A0) <= 226) {}
-  while (analogRead(A0) >= 226 && analogRead(A0) <= 401) {}
-  while (analogRead(A0) >= 401 && analogRead(A0) <= 546) {}
-  while (analogRead(A0) >= 546 && analogRead(A0) <= 890) {}
+  int filtro = 20;
+  int cont =filtro;
+
+  while (cont>0) {
+    int valor = analogRead(A0);
+    if(valor >=1000){
+      cuenta--;
+    }else{
+      cuenta = filtro;
+    }
+  }
 }
 int LeerTeclado_filtroespera() {
   int valor;
