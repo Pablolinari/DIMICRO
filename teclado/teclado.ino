@@ -28,7 +28,7 @@ int LeerTeclado() {
 }
 void TecladoLibre() {
   int filtro = 20;
-  int cont =filtro;
+  int cuenta=filtro;
 
   while (cont>0) {
     int valor = analogRead(A0);
