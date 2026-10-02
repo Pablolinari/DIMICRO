@@ -28,13 +28,13 @@ int LeerTeclado() {
 }
 void TecladoLibre() {
   int filtro = 20;
-  int cuenta=filtro;
+  int cuenta = filtro;
 
-  while (cont>0) {
+  while (cuenta > 0) {
     int valor = analogRead(A0);
-    if(valor >=1000){
+    if (valor >= 1000) {
       cuenta--;
-    }else{
+    } else {
       cuenta = filtro;
     }
   }
@@ -61,7 +61,6 @@ int LeerTeclado_filtroespera() {
       f3 = filtro;
       f4 = filtro;
       f5 = filtro;
-
     } else if ((valor >= 73 && valor <= 226)) {
       f2--;
       f1 = filtro;
@@ -88,63 +87,47 @@ int LeerTeclado_filtroespera() {
       f1 = filtro;
     }
     if (f1 == 0) {
-
       return 1;
     }
     if (f2 == 0) {
-
       return 2;
     }
     if (f3 == 0) {
-
       return 3;
     }
     if (f4 == 0) {
-
       return 4;
     }
     if (f5 == 0) {
-
       return 5;
     }
   }
 }
-
-
 int RepetirTecla(int tecla, int espera) {
   int boton = 0;
-  int f1, f2, f3, f4, f5 = 0;
+  int f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0;
   for (int i = 0; i < espera; i++) {
-    if (tecla == 1 && analogRead(A0) >= 0 && analogRead(A0) <= 73) {
+    int valor = analogRead(A0);
+    boton = 0;
+    if (tecla == 1 && valor >= 0 && valor <= 73) {
       f1++;
-      if (f1 >= espera) {
-        boton = 1;
-      }
-      else{boton=0;break;}
-    } else if (tecla == 2 && analogRead(A0) >= 73 && analogRead(A0) <= 226) {
+      boton = 1;
+    } else if (tecla == 2 && valor >= 73 && valor <= 226) {
       f2++;
-      if (f2 >= espera) {
-        boton = 2;
-      }
-      else{boton=0;break;}
-    } else if (tecla == 3 && analogRead(A0) >= 226 && analogRead(A0) <= 401) {
+      boton = 2;
+    } else if (tecla == 3 && valor >= 226 && valor <= 401) {
       f3++;
-      if (f3 >= espera) {
-        boton = 3;
-      }
-      else{boton=0;break;}
-    } else if (tecla == 4 && analogRead(A0) >= 401 && analogRead(A0) <= 546) {
+      boton = 3;
+    } else if (tecla == 4 && valor >= 401 && valor <= 546) {
       f4++;
-      if (f3 >= espera) {
-        boton = 4;
-      }
-      else{boton=0;break;}
-    } else if (tecla == 5 && analogRead(A0) >= 546 && analogRead(A0) <= 890) {
+      boton = 4;;
+    } else if (tecla == 5 && valor >= 546 && valor <= 890) {
       f5++;
-      if (f5 >= espera) {
-        boton = 5;
-      }
-      else{boton=0;break;}
+      boton = 5;
+    }
+    if (boton != tecla) {
+      boton = 0;
+      break;
     }
     delay(1);
   }
@@ -156,7 +139,6 @@ void loop() {
   int tecla;
   int i = 0;
   while (true) {
-
     Serial.print(i++);
     Serial.print("  Tecla pulsada ....");
     valor = analogRead(A0);
@@ -165,6 +147,7 @@ void loop() {
     Serial.print(valor);
     Serial.print(")      ");
     Serial.println("Procesando tecla ......");
+
     int repe = 800;
     while (tecla == RepetirTecla(tecla, repe)) {
       Serial.println();
