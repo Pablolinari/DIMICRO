@@ -83,6 +83,8 @@ void loop() {
 */
 
 
+
+/*
   lcd.setCursor(20,0);
   for(i=0xe0;i<0xe0+16;i++){
     lcd.write(i);
@@ -103,6 +105,10 @@ void loop() {
       lcd.scrollDisplayRight();
     }
   }
+*/
+
+
+
 /*
 
   delay(1000);
@@ -153,6 +159,7 @@ void loop() {
 
   }
 */
+
   char s1[21];
   char s2[21];
   char s3[21];
@@ -181,5 +188,6 @@ void loop() {
 
   lcd.setCursor(64,0);
   lcd.print(s2);
+  delay(5000);
 
 }
