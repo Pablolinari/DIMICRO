@@ -1,0 +1,107 @@
+REVISIÓN DE tercertallerdisplay.ino
+Comparación con la librería LiquidCrystal
+==================================================
+
+Resumen: los códigos de instrucción y el mapeo de pines están bien. Los fallos
+están en la temporización: la función isBusy() no funciona y write() no espera
+a que el LCD termine la orden anterior. Por eso pueden perderse caracteres u
+órdenes.
+
+
+LO QUE ESTÁ BIEN
+--------------------------------------------------
+
+- Mapeo de pines (ATmega32U4, Leonardo/Micro): cargarDatos() envía cada bit al
+  pin correcto según LiquidCrystal lcd(10,9,8,7,6,5,4,3,2,1,0).
+  D7 va a PD2 (pin 0), D6 a PD3 (pin 1), y así hasta D0 en PE6 (pin 7).
+  RS va a PB6, RW a PB5 y E a PB4. Todo correcto.
+
+- Códigos de instrucción, iguales a los de la librería:
+    * scrollDisplayLeft 0x18 y scrollDisplayRight 0x1C.
+    * display, cursor y blink cambian los bits 2, 1 y 0 de 0x08.
+      El valor inicial 0x0C es correcto.
+    * autoscroll y noAutoscroll usan 0x07 y 0x06 (Entry Mode). Correcto.
+    * setCursor usa los desplazamientos {0x00, 0x40, 0x14, 0x54} con 0x80,
+      que es lo que calcula la librería para 20x4.
+
+- Secuencia de inicio en 8 bits: 0x30 con 4,1 ms, luego 0x30, 0x30 y 0x38.
+  Es correcta.
+
+- Estado final tras reset(): display encendido, sin cursor y sin parpadeo.
+  Es lo mismo que deja lcd.begin().
+
+
+ERRORES
+--------------------------------------------------
+
+1. isBusy() no funciona (línea 238). Es el error más grave.
+
+   - setIO(false) pone en entrada los 11 pines, también RS, RW y E. La línea E
+     queda flotando y el LCD puede leer pulsos falsos.
+   - Para leer el busy flag hay que poner RS=0, RW=1 y E=1, y después leer D7.
+     Tu código no pone RW=1 ni sube E, así que el LCD nunca saca el busy flag
+     al bus.
+   - Al pasar a entrada, si PORTD2 estaba a 1 por el último dato, se activa el
+     pull-up. Entonces se lee 1 siempre y el programa se queda colgado en el
+     while. Si estaba a 0, sale enseguida sin esperar nada.
+   - El orden correcto es:
+       1. Solo los pines de datos en entrada.
+       2. RS=0 y RW=1.
+       3. E=1.
+       4. Leer PD2.
+       5. E=0.
+       6. RW=0.
+       7. Datos otra vez en salida.
+
+2. write() no espera a que termine la orden anterior.
+
+   comando(byte) comprueba si el LCD está ocupado ANTES de enviar, pero write()
+   no lo comprueba. Si escribes justo después de una orden, el carácter se
+   puede perder:
+   - Después de clear(), que tarda unos 1,52 ms, printDisp() escribe sin
+     esperar. La librería hace delayMicroseconds(2000) después del clear.
+     En tu loop solo funciona porque hay un delay(2000) en medio.
+   - autoscroll(); write(0xEE); (líneas 294-295): el carácter se envía unos µs
+     después de la orden, que necesita 37 µs.
+
+3. setmode(), línea 224: comando(0x6, 40) va justo después de clear().
+
+   No se espera a que termine el clear, así que la orden de Entry Mode puede
+   perderse.
+
+4. reset() llama a clear() antes de setmode() (línea 231).
+
+   Envía una orden y consulta el busy flag antes de los 16 ms de arranque y
+   antes de inicializar el LCD. La librería no lo hace y sobra.
+
+
+DIFERENCIAS MENORES CON LIQUIDCRYSTAL
+--------------------------------------------------
+
+- setCursor: si la fila es >= 4, la librería la limita a la última fila; tu
+  función hace return.
+
+- Espera tras escribir: la librería espera 100 µs después de cada pulso de E y
+  tú 37 µs. Es el mínimo del datasheet, muy justo si el oscilador del LCD va
+  lento.
+
+- Funciones que faltan: home() (0x02), leftToRight(), rightToLeft() y
+  createChar(). Ojo: setCursor(0,0) no equivale a home(), porque no deshace el
+  desplazamiento de scrollDisplay.
+
+- printDisp(char*): debería ser const char*. Pasarle un literal da un aviso de
+  compilación. En el código comentado, printDisp('?') (línea 504) daría error,
+  porque pasa un carácter y no una cadena.
+
+- print: la librería también imprime números; printDisp solo cadenas.
+
+
+RECOMENDACIÓN
+--------------------------------------------------
+
+Lo más rápido para que funcione de forma fiable: quitar isBusy() y usar esperas
+fijas, como la librería. Serían 2000 µs en clear(), unos 40-100 µs en el resto
+de órdenes y en write().
+
+Si quieres mantener el busy flag, corrige isBusy() como en el punto 1 y llámala
+también al principio de write().
