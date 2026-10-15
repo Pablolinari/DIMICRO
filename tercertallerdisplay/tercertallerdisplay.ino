@@ -10,7 +10,6 @@ void setup() {
   // put your setup code here, to run once:
   //lcd.begin(20, 4);  // Indica 4 lineas de 20 caracteres
   Serial.begin(57600);
-
   reset();
 }
 
@@ -334,7 +333,7 @@ clear();
 
   delay(1000);
   */
-
+/*
   clear();
   delay(2000);
   printDisp("1 hello, world!");
@@ -342,7 +341,7 @@ clear();
   printDisp("2 Vamos de ca");
   delay(1000);
   cursor();
-  autoscroll();
+  //autoscroll();
   write(0xEE);
   write('a');
   delay(500);
@@ -357,6 +356,7 @@ clear();
   write('?');
   delay(500);
  // noAutoscroll();
+*/
 /*
   setCursor(0, 2);
   for (i = 0xe0; i < 0xe0 + 16; i++) {
@@ -419,13 +419,13 @@ clear();
   }
   noBlink();
 */
-/*
+
   // Parpadeo del display
   for (j = 0; j < 2; j++) {
     noDisplay();
     delay(2000);
     display();
-    delay(2000);
+    delay(2000); 
   }
 
   char s1[21];
@@ -452,7 +452,7 @@ clear();
   setCursor(0, 1);
   printDisp(s2);
   delay(5000);
-  */
+  
 }
 
 
