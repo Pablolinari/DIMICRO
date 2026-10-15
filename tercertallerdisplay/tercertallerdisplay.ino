@@ -10,9 +10,35 @@ void setup() {
   // put your setup code here, to run once:
   //lcd.begin(20, 4);  // Indica 4 lineas de 20 caracteres
   Serial.begin(57600);
+
   reset();
 }
 
+void setIO(bool salida) {
+  if (salida){
+    // solo los pines de datos
+    sbi(DDRE, DDE6);  //p7
+    sbi(DDRD, DDD7);  //p6
+    sbi(DDRC, DDC6);  //p5
+    sbi(DDRD, DDD4);  //p4
+    sbi(DDRD, DDD0);  //p3
+    sbi(DDRD, DDD1);  //p2
+    sbi(DDRD, DDD3);  //p1
+    sbi(DDRD, DDD2);  //p0
+  }
+  else{
+    cbi(DDRE, DDE6);  //p7
+    cbi(DDRD, DDD7);  //p6
+    cbi(DDRC, DDC6);  //p5
+    cbi(DDRD, DDD4);  //p4
+    cbi(DDRD, DDD0);  //p3
+    cbi(DDRD, DDD1);  //p2
+    cbi(DDRD, DDD3);  //p1
+    cbi(DDRD, DDD2);  //p0
+  }
+}
+
+/*
 void setIO(bool salida) {
   if (salida) {
     sbi(DDRB, DDB6);  // p10
@@ -40,6 +66,7 @@ void setIO(bool salida) {
     cbi(DDRD, DDD2);  //p0
   }
 }
+*/
 byte estadoDisplay = 0x0C;  // 0000 1 D C B --> Display on/off control
 byte estadoEntrada = 0x06;  //
 
@@ -98,6 +125,7 @@ void cargarDatos(byte valor) {
 // Escribe un caracter Por pantalla.
 // valor --> Código 8 bits con el caracter a imprimir
 void write(byte valor) {
+  isBusy();
   sbi(PORTB, PORTB6);  //RS = 1
   cbi(PORTB, PORTB5);  // R/W = 0
   cargarDatos(valor);
@@ -147,6 +175,11 @@ void clear() {
   comando(0x01);
 }
 
+void home() {
+  // 0x02 --> 0000 001 - (Return home): DDRAM a 0 y deshace el desplazamiento
+  comando(0x02);
+}
+
 void setCursor(byte columna, byte fila) {
   //Guarda las direcciones de inicio de cada fila
   // 0x00 --> 0; 0x40 --> 64; 0x14 --> 20; 0x54 --> 84
@@ -158,7 +191,7 @@ void setCursor(byte columna, byte fila) {
   byte direccion = filas[fila] + columna;
   //Hace OR con 0x80 (0010000000) + dir en bits --> 0x80: Entra en SET DDRAM ADDRESS
   byte codInstruccion = 0x80 | direccion;
-  comando(codInstruccion, 40);
+  comando(codInstruccion);
 }
 
 void scrollDisplayLeft() {
@@ -221,26 +254,44 @@ void setmode() {
   comando(0x38, 40);
   noDisplay();
   clear();
-  comando(0x6, 40);
+  comando(0x6);
 }
 
 
 
 void reset() {
+  sbi(DDRB, DDB6);  // RS
+  sbi(DDRB, DDB5);  //RW
+  sbi(DDRB, DDB4);  //E
   setIO(true);
-  clear();
+  //clear(); supuestamente no hace falta
   setmode();
   display();
   noCursor();
   noBlink();
 }
+void isBusy(){
+  setIO(false);
+  cbi(PORTB, PORTB6);  // RS
+  sbi(PORTB, PORTB5);  //Rw
+  sbi(PORTB, PORTB4);  //E
+  delayMicroseconds(1); // por que se supone que tarda 360ns en detectar E 
+  // mirar si hace falta ir modificando E dentro del bucle para que funcione
+  while (((PIND & (1 << PIND2)) != 0) == 1) {}
 
+  cbi(PORTB, PORTB6);  // RS
+  cbi(PORTB, PORTB4);  //E
+  cbi(PORTB, PORTB5);  //Rw
+                       //
+  setIO(true);
+}
+/*
 void isBusy() {
   setIO(false);
   while (((PIND & (1 << PIND2)) != 0) == 1) {}
   setIO(true);
 }
-
+*/
 
 
 void loop() {
