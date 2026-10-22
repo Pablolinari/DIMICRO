@@ -14,7 +14,7 @@ void setup() {
 }
 
 void setIO(bool salida) {
-  if (salida){
+  if (salida) {
     // solo los pines de datos
     sbi(DDRE, DDE6);  //p7
     sbi(DDRD, DDD7);  //p6
@@ -24,8 +24,7 @@ void setIO(bool salida) {
     sbi(DDRD, DDD1);  //p2
     sbi(DDRD, DDD3);  //p1
     sbi(DDRD, DDD2);  //p0
-  }
-  else{
+  } else {
     cbi(DDRE, DDE6);  //p7
     cbi(DDRD, DDD7);  //p6
     cbi(DDRC, DDC6);  //p5
@@ -263,18 +262,18 @@ void reset() {
   sbi(DDRB, DDB5);  //RW
   sbi(DDRB, DDB4);  //E
   setIO(true);
-  //clear(); supuestamente no hace falta
+  clear(); //supuestamente no hace falta
   setmode();
   display();
   noCursor();
   noBlink();
 }
-void isBusy(){
+void isBusy() {
   setIO(false);
-  cbi(PORTB, PORTB6);  // RS
-  sbi(PORTB, PORTB5);  //Rw
-  sbi(PORTB, PORTB4);  //E
-  delayMicroseconds(1); // por que se supone que tarda 360ns en detectar E 
+  cbi(PORTB, PORTB6);    // RS
+  sbi(PORTB, PORTB5);    //Rw
+  sbi(PORTB, PORTB4);    //E
+  delayMicroseconds(1);  // por que se supone que tarda 360ns en detectar E
   // mirar si hace falta ir modificando E dentro del bucle para que funcione
   while (((PIND & (1 << PIND2)) != 0) == 1) {}
 
@@ -284,19 +283,13 @@ void isBusy(){
                        //
   setIO(true);
 }
-/*
-void isBusy() {
-  setIO(false);
-  while (((PIND & (1 << PIND2)) != 0) == 1) {}
-  setIO(true);
-}
-*/
+
 
 
 void loop() {
-  byte i;
+  int i;
   int j;
-/*
+
   clear();  // borra el display
   printDisp("1 hello, world!");
   setCursor(0, 1);  // Fila 1 (equivalente a dirección DDRAM 0x40 / 64)
@@ -309,15 +302,15 @@ void loop() {
   printDisp("4 Vamonos de ca");
   write(0xEE);  // Caracter Ñ
   printDisp("as?");
-  delay(1000);
-*/
-clear();
-/*
+  delay(1500);
+
+  
+
   for (i = 0; i < 20; i++) {
     scrollDisplayLeft();
     delay(500);
   }
-  delay(1000);
+  delay(500);
 
   clear();
   for (i = 0xe0; i < 0xe0 + 16; i++) {
@@ -331,15 +324,15 @@ clear();
   }
   write(i);
 
-  delay(1000);
-  */
-/*
+  delay(500);
+
+
   clear();
-  delay(2000);
+  delay(500);
   printDisp("1 hello, world!");
   setCursor(0, 1);
   printDisp("2 Vamos de ca");
-  delay(1000);
+  delay(500);
   cursor();
   //autoscroll();
   write(0xEE);
@@ -355,9 +348,9 @@ clear();
   delay(500);
   write('?');
   delay(500);
- // noAutoscroll();
-*/
-/*
+  noAutoscroll();
+
+  clear();
   setCursor(0, 2);
   for (i = 0xe0; i < 0xe0 + 16; i++) {
     write(i);
@@ -368,43 +361,43 @@ clear();
     delay(100);
   }
 
-  // Equivale a lcd.home() -> mover cursor a origen
-  setCursor(0, 0);
+
+  setCursor(0,0);
 
   for (j = 0; j < 3; j++) {
-    delay(1000);
+    delay(500);
     for (i = 0; i < 20; i++) {
       scrollDisplayLeft();
     }
-    delay(1000);
+    delay(500);
     for (i = 0; i < 20; i++) {
       scrollDisplayRight();
     }
   }
 
-  delay(1000);
+  delay(500);
 
   cursor();
-  for (j = 0; j < 1; j++) {
-    for (i = 0; i < 16; i++) {
-      setCursor(i, 0);
-      delay(200);
-    }
-    for (i = 15; i >= 1; i--) {
-      setCursor(i, 0);
-      delay(200);
-    }
+
+  for (i = 0; i < 16; i++) {
     setCursor(i, 0);
     delay(200);
-    for (i = 0; i < 16; i++) {
-      setCursor(i, 1);
-      delay(200);
-    }
-    for (i = 15; i >= 0; i--) {
-      setCursor(i, 1);
-      delay(200);
-    }
   }
+  for (i = 15; i >= 1; i--) {
+    setCursor(i, 0);
+    delay(200);
+  }
+  setCursor(i, 0);
+  delay(200);
+  for (i = 0; i < 16; i++) {
+    setCursor(i, 1);
+    delay(200);
+  }
+  for (i = 15; i >= 0; i--) {
+    setCursor(i, 1);
+    delay(200);
+  }
+
 
   blink();
   for (j = 0; j < 1; j++) {
@@ -418,15 +411,8 @@ clear();
     }
   }
   noBlink();
-*/
+  clear();
 
-  // Parpadeo del display
-  for (j = 0; j < 2; j++) {
-    noDisplay();
-    delay(2000);
-    display();
-    delay(2000); 
-  }
 
   char s1[21];
   char s2[21];
@@ -451,8 +437,7 @@ clear();
 
   setCursor(0, 1);
   printDisp(s2);
-  delay(5000);
-  
+  delay(500);
 }
 
 
