@@ -1,14 +1,12 @@
 #define sbi(port, bit) (port) |= (1 << (bit));   // setbit
 #define cbi(port, bit) (port) &= ~(1 << (bit));  //clearbit
-// the setup function runs once when you press reset or power the board
+
 int ultimoEstadoA;
 int ultimoEstadoB;
 int direccion = 1; //derecha 
 const int PPR =823.1;
 void setup() {
   Serial.begin(9600);
-  // initialize digital pin LED_BUILTIN as an output.
-  //pinMode(LED_BUILTIN, OUTPUT);
 
   pinMode(1, INPUT_PULLUP);  //encoder b
   pinMode(2, INPUT_PULLUP);  //encoder a
@@ -20,7 +18,6 @@ void setup() {
   digitalWrite(3, direccion);
   digitalWrite(5, !direccion);
   analogWrite(6,100);
-  //Serial.println("Prueba de teclado");
 }
 long contadorA = 0;
 long contadorB = 0;

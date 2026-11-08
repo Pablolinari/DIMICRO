@@ -36,35 +36,6 @@ void setIO(bool salida) {
   }
 }
 
-/*
-void setIO(bool salida) {
-  if (salida) {
-    sbi(DDRB, DDB6);  // p10
-    sbi(DDRB, DDB5);  //p9
-    sbi(DDRB, DDB4);  //p8
-    sbi(DDRE, DDE6);  //p7
-    sbi(DDRD, DDD7);  //p6
-    sbi(DDRC, DDC6);  //p5
-    sbi(DDRD, DDD4);  //p4
-    sbi(DDRD, DDD0);  //p3
-    sbi(DDRD, DDD1);  //p2
-    sbi(DDRD, DDD3);  //p1
-    sbi(DDRD, DDD2);  //p0
-  } else {
-    cbi(DDRB, DDB6);  // p10
-    cbi(DDRB, DDB5);  //p9
-    cbi(DDRB, DDB4);  //p8
-    cbi(DDRE, DDE6);  //p7
-    cbi(DDRD, DDD7);  //p6
-    cbi(DDRC, DDC6);  //p5
-    cbi(DDRD, DDD4);  //p4
-    cbi(DDRD, DDD0);  //p3
-    cbi(DDRD, DDD1);  //p2
-    cbi(DDRD, DDD3);  //p1
-    cbi(DDRD, DDD2);  //p0
-  }
-}
-*/
 byte estadoDisplay = 0x0C;  // 0000 1 D C B --> Display on/off control
 byte estadoEntrada = 0x06;  //
 
@@ -143,9 +114,6 @@ void printDisp(char* frase) {
   }
 }
 
-//Usa las Instrucciones del lcd
-// valor --> Código de la instrucción en byte
-// timeout --> duración de la operacion
 void comando(byte valor, int timeout) {
   cbi(PORTB, PORTB6);  //RS = 0
   cbi(PORTB, PORTB5);  //R/W = 0
@@ -292,13 +260,13 @@ void loop() {
 
   clear();  // borra el display
   printDisp("1 hello, world!");
-  setCursor(0, 1);  // Fila 1 (equivalente a dirección DDRAM 0x40 / 64)
+  setCursor(0, 1);  
   printDisp("2 hello, world!");
-  setCursor(0, 2);  // Fila 2 (equivalente a dirección DDRAM 0x14 / 20)
+  setCursor(0, 2); 
   printDisp("3 hola ol");
   write(0xE3);  // Caracter especial epsilon
   printDisp("!");
-  setCursor(0, 3);  // Fila 3 (equivalente a dirección DDRAM 0x54 / 84)
+  setCursor(0, 3);   
   printDisp("4 Vamonos de ca");
   write(0xEE);  // Caracter Ñ
   printDisp("as?");
@@ -441,111 +409,3 @@ void loop() {
 }
 
 
-//void loop() {
-//byte i;
-// Programa a Completar
-/*
-  lcd.clear(); // borra el display
-  lcd.print("1 hello, world!");
-  lcd.setCursor(64,0);
-  lcd.print("2 hello, world!");
-  lcd.setCursor(20,0);
-  lcd.print("3 hola ol");
-  lcd.write(0xE3);  // para escribir el caracter especial epsilon
-  lcd.print("!");
-  lcd.setCursor(84,0);
-  lcd.print("4 Vamonos de ca");
-  lcd.write(0xEE); // caracter Ñ
-  lcd.print("as?");
-  delay(1000);
-  */
-/*
-  //Programa
-  comando(0x01, 1520);           //lcd.clear()
-  printDisp("1 hello, world!");  // lcd.print()
-  setCursor(64, 0);
-  printDisp("2 hello world!");
-  setCursor(20, 0);
-  printDisp("3 hola ol");
-  write(0xE3);
-  printDisp("!");
-  setCursor(84, 0);
-  printDisp("4 Vamonos de ca");
-  write(0xEE);
-  printDisp("as?");
-  delay(1000);
-*/
-/*
-
-  for (i = 0; i < 20; i++) {
-    scrollDisplayLeft();
-    delay(500);
-  }
-  delay(1000);
-
-
-  for (i = 0; i < 20; i++) {
-    scrollDisplayRight();
-    delay(500);
-  }
-  delay(1000);
-*/
-
-
-
-/*lcd.clear();
-  for(i=0xe0;i<0xe0+16;i++){
-    lcd.write(i);
-    delay(100);
-  }
-  lcd.setCursor(64,0);
-  for(i=0xf0;i<0xf0+15;i++){
-    lcd.write(i);
-    delay(100);
-  }
-  lcd.write(i);
-
-
-  delay(1000);
-*/
-/*
-  comando(0x01, 1520);
-  for (i = 0xe0; i < 0xe0 + 16; i++) {
-    write(i);
-    delay(100);
-  }
-  setCursor(64, 0);
-  for (i = 0xf0; i < 0xf0 + 15; i++) {
-    write(i);
-    delay(100);
-  }
-  write(i);
-  delay(1000);
-
-*/
-/*
-  clear();
-
-  printDisp("1 hello, world!");
-  setCursor(64, 0);
-  printDisp("2 Vamos de ca");
-  delay(5000);
-  cursor();
-  autoscroll();
-  write(0xEE);
-  write('a');
-  delay(500);
-  write('s');
-  delay(500);
-  printDisp('?');
-  delay(500);
-  write('?');
-  delay(500);
-  write('?');
-  delay(500);
-  write('?');
-  delay(500);
-  noAutoscroll();
-  */
-
-//}
