@@ -74,10 +74,11 @@ void setup() {
 
 
 void loop() {
-  uint32_t lastms = 0;
+  static uint32_t lastms = 0;   // static: conserva su valor entre vueltas
   uint32_t now_ms = clock_ms();
 
-  if (now_ms % 1000==0) {
+  if (now_ms - lastms >= 1000) {
+    lastms += 1000;
     Serial.println("Ha pasado 1 segundo");
   }
 }
