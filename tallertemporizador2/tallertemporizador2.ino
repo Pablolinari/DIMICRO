@@ -12,7 +12,7 @@
 volatile uint32_t g_millis = 0;
 
 void clock_init() {
-  //desactiver interrucpciones cghlobales
+  //Desactivar las interrupciones globales
   cli();
   //ttcr1a ,ttcr1b y c  a 0 todos
   TCCR1A = 0;
@@ -57,12 +57,34 @@ uint32_t clock_ms() {
 uint32_t clock_us() {
   uint32_t ms;
   uint32_t us;
+  uint16_t tcnt;
+
   cli();
   ms = g_millis;
-  microsecond = read(TCNT1)/2
-  us = ms*1000 + microsecond
+  tcnt = TCNT1;
   sei();
-  return ms;
+  us = ms * 1000 + tcnt/2;
+  return us;
+  
+}
+
+// Esperas Relativas y Absolutas
+void delay_ms(uint32_t ms){
+  uint32_t inicio = clock_ms();
+  while(clock_ms() - inicio < ms);
+}
+
+void delay_until_ms(uint32_t end_ms){
+  while((int32_t)(end_ms - clock_ms()) > 0);
+}
+
+void delay_us(uint32_t us){
+  uint32_t inicio = clock_us();
+  while(clock_us()-inicio < us);
+}
+
+void delay_until_us(uint32_t end_us){
+  while((int32_t)(end_us - clock_us()) > 0);
 }
 
 void setup() {
@@ -74,11 +96,49 @@ void setup() {
 
 
 void loop() {
-  static uint32_t lastms = 0;   // static: conserva su valor entre vueltas
+  /*static uint32_t lastms = 0;   // static: conserva su valor entre vueltas
   uint32_t now_ms = clock_ms();
 
   if (now_ms - lastms >= 1000) {
     lastms += 1000;
     Serial.println("Ha pasado 1 segundo");
+  }*/
+
+   uint32_t t0, t1;
+
+  // 1. delay_ms: debería medir ~500000 us
+  t0 = clock_us();
+  delay_ms(500);
+  t1 = clock_us();
+  Serial.print("delay_ms(500)   -> ");
+  Serial.print(t1 - t0);
+  Serial.println(" us");
+
+  // 2. delay_us: debería medir ~250 us
+  t0 = clock_us();
+  delay_us(250);
+  t1 = clock_us();
+  Serial.print("delay_us(250)   -> ");
+  Serial.print(t1 - t0);
+  Serial.println(" us");
+
+  // 3. delay_until_ms: 3 ticks exactos cada 200 ms
+  uint32_t t = clock_ms();
+  for (int i = 0; i < 3; i++) {
+    t += 200;
+    delay_until_ms(t);
+    Serial.print("until_ms tick en ");
+    Serial.print(clock_ms());
+    Serial.println(" ms");
   }
+
+  // 4. delay_until_us: esperar hasta dentro de 1000 us
+  uint32_t fin = clock_us() + 1000;
+  delay_until_us(fin);
+  Serial.print("delay_until_us  -> retraso ");
+  Serial.print(clock_us() - fin);
+  Serial.println(" us");
+
+  Serial.println("----");
+  delay_ms(2000);
 }
