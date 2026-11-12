@@ -94,7 +94,6 @@ hay 3 funciones que tienen una orden con 3 parametros ,
 
 
 */
-
 void comando(byte valor, int timeout) {
   cbi(PORTB, PORTB6);
   cbi(PORTB, PORTB5);
