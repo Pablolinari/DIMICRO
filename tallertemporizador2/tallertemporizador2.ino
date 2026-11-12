@@ -54,6 +54,8 @@ uint32_t clock_ms() {
   sei();
   return ms;
 }
+
+
 uint32_t clock_us() {
   uint32_t ms;
   uint32_t us;
@@ -62,13 +64,16 @@ uint32_t clock_us() {
   cli();
   ms = g_millis;
   tcnt = TCNT1;
+  if((TIFR1 & (1<<ICF1))&& (tcnt < (ICR1/2))){
+    ms++;
+  }
   sei();
   us = ms * 1000 + tcnt/2;
   return us;
   
 }
 
-// Esperas Relativas y Absolutas
+
 void delay_ms(uint32_t ms){
   uint32_t inicio = clock_ms();
   while(clock_ms() - inicio < ms);
