@@ -1,13 +1,5 @@
-#define sbi(port, bit) (port) |= (1 << (bit));   // setbit
-#define cbi(port, bit) (port) &= ~(1 << (bit));  //clearbit
+#include "teclado.h"
 // the setup function runs once when you press reset or power the board
-void setup() {
-  Serial.begin(57600);
-  // initialize digital pin LED_BUILTIN as an output.
-  //pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(A0, INPUT);
-  //Serial.println("Prueba de teclado");
-}
 int LeerTeclado() {
   int valor;
   int boton;
@@ -133,28 +125,4 @@ int RepetirTecla(int tecla, int espera) {
   }
   return boton;
 }
-// the loop function runs over and over again forever
-void loop() {
-  int valor;
-  int tecla;
-  int i = 0;
-  while (true) {
-    Serial.print(i++);
-    Serial.print("  Tecla pulsada ....");
-    valor = analogRead(A0);
-    Serial.print(tecla = LeerTeclado_filtroespera());
-    Serial.print("(");
-    Serial.print(valor);
-    Serial.print(")      ");
-    Serial.println("Procesando tecla ......");
 
-    int repe = 800;
-    while (tecla == RepetirTecla(tecla, repe)) {
-      Serial.println();
-      Serial.print("  Tecla pulsada ....");
-      Serial.print(tecla);
-      Serial.println("repetida Procesando tecla ......");
-      repe = 200;
-    }
-  }
-}
