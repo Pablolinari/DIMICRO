@@ -1,3 +1,5 @@
+#ifndef TECLADO_H
+#define TECLADO_H
 #include "config.h"
 int LeerTeclado();
 void TecladoLibre();

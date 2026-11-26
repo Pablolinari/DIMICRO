@@ -1,3 +1,5 @@
+#ifndef LCD_
+#define LCD_H
 #include "config.h"
 
 void setIO(bool salida);
